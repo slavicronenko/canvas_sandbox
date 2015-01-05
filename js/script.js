@@ -1,21 +1,29 @@
 'use strict';
 
-$(document).ready(function(){
-    var canvas,
-        workspace;
+function CanvasSandbox(){
+    this.element;
+    this.context;
 
-    function init(id){
+    this.init = function (id){
         if(typeof id === 'string'){
-            canvas = document.getElementById(id);
+            this.element = document.getElementById(id);
 
-            if(!!canvas){
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
+            if(!!this.element){
+                this.element.width = window.innerWidth;
+                this.element.height = window.innerHeight;
 
-                workspace = canvas.getContext('2d');
+                this.context = this.element.getContext('2d');
             }
         }
-    }
 
-    init('workspace');
+        return this;
+    };
+
+    this.draw = function () {
+
+    }
+}
+
+$(document).ready(function(){
+    (new CanvasSandbox()).init('workspace').draw();
 });
