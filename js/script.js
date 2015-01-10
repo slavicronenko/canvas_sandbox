@@ -2,6 +2,8 @@
     'use strict';
 
     function CanvasSandbox() {
+        var ctx;
+
         /**
          * Function for checking required properties.
          * @param settings {object} object to check
@@ -35,10 +37,58 @@
                     this.element.height = window.innerHeight;
 
                     this.context = this.element.getContext('2d');
+                    ctx = this.context;
+                    ctx.fillStyle = '#fff';
+                    ctx.lineStyle = "#000";
                 }
             }
 
             return this;
+        };
+
+        /**
+         * Drawign a poligon
+         * @param {object} c array with coordinates
+         * @returns {object} current object
+         */
+        this.poligon = function (c) {
+            if (typeof c === 'object') {
+                var i = 0,
+                    l = c.length,
+                    x,
+                    y;
+
+                ctx.beginPath();
+
+                for (i; i < l; i += 1) {
+                    if (!!c[i].x) {
+                        x = c[i].x;
+                    } else {
+                        x = (!!c[i - 1].x) ? c[i - 1].x : 0;
+                        c[i].x = c[i - 1].x;
+                    }
+
+                    if (!!c[i].y) {
+                        y = c[i].y;
+                    } else {
+                        y = (!!c[i - 1].y) ? c[i - 1].y : 0;
+                        c[i].y = c[i - 1].y;
+                    }
+
+                    if (i === 0 || c[i].action === 'move') {
+                        ctx.moveTo(x, y);
+                    } else {
+                        console.log(x, y);
+                        ctx.lineTo(x, y);
+                    }
+                }
+
+                ctx.stroke();
+
+                return this;
+            }
+
+            return false;
         };
 
         /**
@@ -48,6 +98,7 @@
          */
         this.drawVector = function (settings) {
             if (checkSettings(settings, ['x', 'y', 'angle', 'width'])) {
+
                 return this;
             }
 
@@ -59,12 +110,6 @@
          * @returns {object} current object
          */
         this.draw = function () {
-            this.drawVector({
-                x: 228,
-                y: 322,
-                angle: 15,
-                width: 1488
-            });
 
             return this;
         };
