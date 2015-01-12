@@ -18,7 +18,7 @@
 
             for (i; i < l; i += 1) {
                 if (!settings.hasOwnProperty(properties[i])) {
-                    result = false;
+                    throw new Error('Property "' + properties[i] + '" is required!');
                 }
             }
 
@@ -48,9 +48,10 @@
         };
 
         /**
-         * Setter of context properties
+         * Setter for context properties
          * @param {string || object} key Property name or object with key/value properties
          * @param {string} value of property (not used if "key" parameter is object)
+         * @returns {object} current object
          */
         this.settings = function (key, value) {
             if (typeof key === 'string' && !!key && !!value) {
@@ -121,27 +122,13 @@
         };
 
         /**
-         * Drawing a vector line
-         * @param settings
-         * @returns {object} current object
-         */
-        this.drawVector = function (settings) {
-            if (checkSettings(settings, ['x', 'y', 'angle', 'width'])) {
-
-                return this;
-            }
-
-            return false;
-        };
-
-        /**
          * Drawing script
          * @returns {object} current object
          */
         this.draw = function () {
             this.settings({
                 lineWidth: 10,
-                lineCap: 'butt',
+                lineCap: 'round',
                 globalAlpha: 0.5,
                 lineDashOffset: 2
             }).settings(
