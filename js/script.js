@@ -2,7 +2,8 @@
     'use strict';
 
     function CanvasSandbox() {
-        var ctx;
+        var ctx,
+            element;
 
         /**
          * Function for checking required properties.
@@ -30,16 +31,45 @@
          */
         this.init = function (id) {
             if (typeof id === 'string') {
-                this.element = document.getElementById(id);
+                element = document.getElementById(id);
 
-                if (!!this.element) {
-                    this.element.width = window.innerWidth;
-                    this.element.height = window.innerHeight;
+                if (!!element && !!element.getContext) {
+                    element.width = window.innerWidth;
+                    element.height = window.innerHeight;
 
-                    this.context = this.element.getContext('2d');
+                    this.context = element.getContext('2d');
                     ctx = this.context;
                     ctx.fillStyle = '#fff';
                     ctx.lineStyle = "#000";
+                }
+            }
+
+            return this;
+        };
+
+        /**
+         * Setter of context properties
+         * @param {string || object} key Property name or object with key/value properties
+         * @param {string} value of property (not used if "key" parameter is object)
+         */
+        this.settings = function (key, value) {
+            if (typeof key === 'string' && !!key && !!value) {
+                if (ctx.hasOwnProperty(key)) {
+                    ctx[key] = value;
+                } else if (typeof ctx[key] === 'function') {
+                    if (typeof value === 'object') {
+                        ctx[key].apply(ctx, value);
+                    } else {
+                        ctx[key](value);
+                    }
+                }
+            } else if (typeof key === 'object' && !!key) {
+                var i;
+
+                for (i in key) {
+                    if (ctx.hasOwnProperty(i)) {
+                        ctx[i] = key[i];
+                    }
                 }
             }
 
@@ -78,7 +108,6 @@
                     if (i === 0 || c[i].action === 'move') {
                         ctx.moveTo(x, y);
                     } else {
-                        console.log(x, y);
                         ctx.lineTo(x, y);
                     }
                 }
@@ -110,12 +139,29 @@
          * @returns {object} current object
          */
         this.draw = function () {
+            this.settings({
+                lineWidth: 10,
+                lineCap: 'butt',
+                globalAlpha: 0.5,
+                lineDashOffset: 2
+            }).settings(
+                'setLineDash',
+                [[4, 16]]
+            ).poligon([
+                {x: 100,y: 100},
+                {x: 200,y: 200}
+            ]).poligon([
+                {x: 100,y: 200},
+                {x: 200,y: 100}
+            ]);
 
             return this;
         };
     }
 
     $(document).ready(function () {
-        (new CanvasSandbox()).init('workspace').draw();
+        var sandbox = new CanvasSandbox();
+
+        sandbox.init('workspace').draw();
     });
 }());
