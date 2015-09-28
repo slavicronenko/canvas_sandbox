@@ -7,7 +7,7 @@
     if (!!VRCANVAS.Scene) {
         scene = new VRCANVAS.Scene('workspace');
 
-        scene.addPart(new Box({
+        scene.addPart(new VRCANVAS.Box({
             x: 100,
             y: 150,
             width: 200,
