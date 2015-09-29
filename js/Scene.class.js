@@ -11,6 +11,10 @@
             value: document.getElementById(id)
         });
 
+        if (!this.canvas) {
+            throw new Error('DOM Element "' + id + '" not found!');
+        }
+
         Object.defineProperty(this, 'context', {
             enumerable: false,
             writable: false,
@@ -25,10 +29,6 @@
             value: new window.VRCANVAS.Parts()
         });
 
-        if (!this.canvas) {
-            throw new window.DOMException('DOM Element "' + id + '" not found!');
-        }
-
         (function animloop() {
             window.requestAnimFrame(animloop);
             $this.context.clearRect(0, 0, $this.canvas.width, $this.canvas.height);
@@ -41,6 +41,9 @@
         },
         addPart: function (item) {
             this.parts.add(item);
+        },
+        renderAll: function(){
+            this.parts.renderAll(this.context);
         }
     };
 }(window));

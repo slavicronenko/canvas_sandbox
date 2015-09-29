@@ -1,7 +1,7 @@
 (function(window){
     'use strict';
 
-    window.VRCANVAS.Box = function(properties){
+    window.VRCANVAS.Circle = function(properties){
         var i;
 
         for (i in properties) {
@@ -10,10 +10,11 @@
             }
         }
     };
-    Object.setPrototypeOf(window.VRCANVAS.Box.prototype, window.VRCANVAS.Part.prototype);
-    window.VRCANVAS.Box.prototype.render = function (context) {
+    Object.setPrototypeOf(window.VRCANVAS.Circle.prototype, window.VRCANVAS.Part.prototype);
+    window.VRCANVAS.Circle.prototype.render = function (context) {
+        this.reset(context);
         context.beginPath();
-        context.rect(this.x, this.y, this.width, this.height);
+        context.arc(this.x, this.y, this.r, 0, 2 * Math.PI);
         context.fillStyle = this.fillStyle;
         context.fill();
         context.lineWidth = this.lineWidth;

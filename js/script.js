@@ -16,5 +16,24 @@
             lineWidth: 10,
             strokeStyle: '#f00'
         }));
+
+        scene.addPart(new VRCANVAS.Circle({
+            x: 100,
+            y: 150,
+            r: 20,
+            fillStyle: '#fff',
+            lineWidth: 0,
+            strokeStyle: '#f00'
+        }));
+
+        scene.addPart(new VRCANVAS.Polygon({
+            lineWidth: 2,
+            coordinates: [
+                {x: 100, y: 100},
+                {x: 200, y: 200},
+                {x: 300, y: 200},
+                {x: 300, y: 300},
+            ]
+        }));
     }
 }(window));
