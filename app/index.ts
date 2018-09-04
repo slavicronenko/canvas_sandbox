@@ -1,3 +1,8 @@
-import { of } from 'rxjs';
+import { timer } from 'rxjs';
+import { map } from 'rxjs/operators';
 
-of(111).subscribe(console.log);
+timer(0, 1000)
+  .pipe(
+    map((x) => x * 2)
+  )
+  .subscribe(console.log);
