@@ -1,6 +1,6 @@
-import { interval, merge, of, timer } from 'rxjs';
+import { interval, merge, of, timer, concat, zip, fromEvent } from 'rxjs';
 import {
-  bufferCount, bufferTime, concatMap,
+  bufferCount, bufferTime, concatAll, concatMap,
   count,
   debounce,
   debounceTime,
@@ -9,15 +9,15 @@ import {
   elementAt,
   filter,
   last,
-  map, max, min, reduce,
+  map, max, mergeAll, min, pluck, reduce, switchAll, switchMap, mergeMap,
   take,
-  takeLast
+  takeLast, timeout
 } from 'rxjs/operators';
 
 function getObserver(name: string) {
   return {
     next: (value) => {
-      console.log(`${name} - next: ${value}`);
+      console.log(`${name} - next:`, value);
     },
     complete: () => {
       console.log(`${name} - complete!`);
@@ -37,11 +37,10 @@ const observable2 = interval(789)
     map((x) => x * 3)
   );
 
-/*merge(observable1, observable2)
-  .pipe(
-    bufferTime(1000)
-  )
-  .subscribe(getObserver('obs1'));*/
+const obs1 = getObserver('obs1');
 
-observable1.subscribe(getObserver('test1'));
-observable1.subscribe(getObserver('test2'));
+fromEvent(document, 'click')
+  .pipe(
+    switchMap(() => interval(1000).pipe(take(3)))
+  )
+  .subscribe(obs1);
