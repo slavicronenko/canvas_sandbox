@@ -9,6 +9,9 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'bundle.js'
   },
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
+  },
   module: {
     rules: [
       {
@@ -19,7 +22,11 @@ module.exports = {
       {
         test: /\.ts$/,
         loader: 'ts-loader',
-      }
+      },
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
     ]
   },
   devtool: 'inline-source-map',
