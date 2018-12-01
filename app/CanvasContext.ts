@@ -20,27 +20,33 @@ export class CanvasContext {
     this.context = this.canvasElement.getContext('2d');
 
     document.body.appendChild(this.canvasElement);
+    this.play();
   }
 
   private readonly canvasElement: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
   private readonly entities: IDrawable[] = [];
+  private currentFrameId: number;
 
   public add(entity: IDrawable): void {
     this.entities.push(entity);
+  }
+
+  private play(): void {
     this.redraw();
+    this.currentFrameId = requestAnimationFrame(this.play.bind(this));
   }
 
   private redraw(): void {
     this.entities.forEach((entity) => entity.draw(this.context));
   }
 
-  private static createCanvasElement(id, width, height): HTMLCanvasElement {
+  private static createCanvasElement(id: string, width: number, height: number): HTMLCanvasElement {
     const newElement = document.createElement('canvas');
 
     newElement.setAttribute('id', id);
-    newElement.setAttribute('width', width);
-    newElement.setAttribute('height', height);
+    newElement.setAttribute('width', width.toString());
+    newElement.setAttribute('height', height.toString());
 
     return newElement;
   }

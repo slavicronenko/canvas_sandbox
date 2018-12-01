@@ -24,7 +24,6 @@ export class Dot implements IDrawable {
     const { x, y } = this.currentPosition;
     const { width, height } = this.size;
 
-    console.log(x, y, width, height);
     context.beginPath();
     context.strokeRect(x, y, width, height);
   }
