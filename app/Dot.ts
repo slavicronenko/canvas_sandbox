@@ -1,16 +1,8 @@
-import { CanvasContext } from './CanvasContext';
 import { ICoordinates, IDrawable, ISize } from './interfaces';
 
 export class Dot implements IDrawable {
-  constructor(settings: IDotSettings) {
-    this.context = settings.context;
-    this.currentPosition = settings.position ? settings.position : { x: 0, y: 0 };
+  constructor(private currentPosition: ICoordinates = Dot.DEFAULT_POSITION) {}
 
-    this.context.add(this);
-  }
-
-  private context: CanvasContext;
-  private currentPosition: ICoordinates;
   private size: ISize = {
     width: 1,
     height: 1
@@ -27,9 +19,8 @@ export class Dot implements IDrawable {
     context.beginPath();
     context.strokeRect(x, y, width, height);
   }
-}
 
-interface IDotSettings {
-  context: CanvasContext;
-  position?: ICoordinates;
+  public static get DEFAULT_POSITION() {
+    return { x: 0, y: 0 };
+  }
 }
