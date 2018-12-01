@@ -10,14 +10,14 @@ export class Dot implements IDrawable {
   }
 
   private context: CanvasContext;
-  private readonly currentPosition: ICoordinates;
+  private currentPosition: ICoordinates;
   private size: ISize = {
     width: 1,
     height: 1
   };
 
   public move({ x, y }: ICoordinates): void {
-    console.log(`moving to ${x}:${y}`);
+    this.currentPosition = { x, y };
   }
 
   public draw(context: CanvasRenderingContext2D): void {

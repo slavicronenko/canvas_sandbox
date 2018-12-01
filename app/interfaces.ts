@@ -11,3 +11,7 @@ export interface ISize {
 export interface IDrawable extends Object {
   draw(context: CanvasRenderingContext2D): void;
 }
+
+export interface ICanvasMouseEvent extends MouseEvent {
+  targetCoordinates: ICoordinates;
+}

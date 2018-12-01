@@ -1,5 +1,5 @@
 import { generateString } from './util';
-import { IDrawable } from './interfaces';
+import { ICanvasMouseEvent, IDrawable } from './interfaces';
 
 export class CanvasContext {
   constructor(settings: ICanvasContextSettings = CanvasContext.DEFAULT_SETTINGS) {
@@ -32,13 +32,37 @@ export class CanvasContext {
     this.entities.push(entity);
   }
 
+  public addEventListener(type: string, callback: (event: ICanvasMouseEvent) => void): void {
+    this.canvasElement.addEventListener(type, this.createEventHandler(type, callback));
+  }
+
+  private createEventHandler(type, callback): (event: Event) => void {
+    const handlers = {  // TODO: find more elegant way
+      click: (event: MouseEvent): void => {
+        callback(Object.assign(event, {
+          targetCoordinates: {
+            x: event.clientX - this.canvasElement.offsetLeft,
+            y: event.clientY - this.canvasElement.offsetTop
+          }
+        }));
+      }
+    };
+
+    return handlers[type] || callback;
+  }
+
   private play(): void {
     this.redraw();
     this.currentFrameId = requestAnimationFrame(this.play.bind(this));
   }
 
   private redraw(): void {
+    this.clear();
     this.entities.forEach((entity) => entity.draw(this.context));
+  }
+
+  private clear(): void {
+    this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
   }
 
   private static createCanvasElement(id: string, width: number, height: number): HTMLCanvasElement {
