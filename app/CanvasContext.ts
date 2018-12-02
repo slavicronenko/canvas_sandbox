@@ -36,16 +36,19 @@ export class CanvasContext {
     this.canvasElement.addEventListener(type, this.createEventHandler(type, callback));
   }
 
-  private createEventHandler(type, callback): (event: Event) => void {
-    const handlers = {  // TODO: find more elegant way
-      click: (event: MouseEvent): void => {
-        callback(Object.assign(event, {
-          targetCoordinates: {
-            x: event.clientX - this.canvasElement.offsetLeft,
-            y: event.clientY - this.canvasElement.offsetTop
-          }
-        }));
-      }
+  private createEventHandler(type, callback): (event: Event) => void {  // TODO: find more elegant way
+    const mouseEvent = (event: MouseEvent): void => {
+      callback(Object.assign(event, {
+        targetCoordinates: {
+          x: event.clientX - this.canvasElement.offsetLeft,
+          y: event.clientY - this.canvasElement.offsetTop
+        }
+      }));
+    };
+
+    const handlers = {
+      click: mouseEvent,
+      mousemove: mouseEvent
     };
 
     return handlers[type] || callback;
