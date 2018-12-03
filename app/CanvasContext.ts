@@ -1,7 +1,7 @@
 import { generateString } from './util';
 import { ICanvasMouseEvent, IDrawable } from './interfaces';
 
-export class CanvasContext {
+export class CanvasContext { // TODO: pick proper name
   constructor(settings: ICanvasContextSettings = CanvasContext.DEFAULT_SETTINGS) {
     const {
       element,

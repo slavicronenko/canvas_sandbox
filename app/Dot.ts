@@ -1,7 +1,7 @@
-import { ICoordinates, IDrawable, ISize } from './interfaces';
-import { calculateNextPosition } from './util';
+import { IDrawable, ISize } from './interfaces';
+import { Point } from './Point';
 
-export class Dot implements IDrawable {
+export class Dot implements IDrawable { // TODO: pick proper name
   constructor(private settings: IDotSettings = Dot.DEFAULT_SETTINGS) {
     const {
       position,
@@ -15,8 +15,8 @@ export class Dot implements IDrawable {
   }
 
   private lastDrawTime: number = Date.now();
-  private currentPosition: ICoordinates;
-  private targetPosition: ICoordinates;
+  private currentPosition: Point;
+  private targetPosition: Point;
   private readonly maxSpeed: number;          // pixels per second
   private currentSpeed: number = 0;           // pixels per second
   private readonly acceleration: number;      // pixels pre second^2
@@ -25,8 +25,8 @@ export class Dot implements IDrawable {
     height: 1
   };
 
-  public setTargetPosition({ x, y }: ICoordinates): void {
-    this.targetPosition = { x, y };
+  public setTargetPosition(point: Point): void {
+    this.targetPosition = point.copy();
   }
 
   public draw(context: CanvasRenderingContext2D): void { // TODO: optimize
@@ -50,10 +50,10 @@ export class Dot implements IDrawable {
 
   private updatePositions() {
     this.currentPosition = (this.targetPosition && this.currentPosition !== this.targetPosition)
-      ? calculateNextPosition(this.currentPosition, this.targetPosition, this.currentSpeed, this.lastDrawTime)
+      ? Point.calculateNextPosition(this.currentPosition, this.targetPosition, this.currentSpeed, this.lastDrawTime)
       : this.currentPosition;
 
-    if (this.currentPosition === this.targetPosition)  { // TODO: fix this bug (object comparison)
+    if (this.currentPosition.equalsTo(this.targetPosition))  {
       this.targetPosition = null;
       this.currentSpeed = 0;
     }
@@ -61,7 +61,7 @@ export class Dot implements IDrawable {
 
   public static get DEFAULT_SETTINGS(): IDotSettings {
     return {
-      position: { x: 0, y: 0 },
+      position: new Point(0, 0),
       speed: 500,
       acceleration: 100
     };
@@ -69,7 +69,7 @@ export class Dot implements IDrawable {
 }
 
 interface IDotSettings {
-  position?: ICoordinates;
+  position?: Point;
   speed?: number;
   acceleration?: number;
 }
