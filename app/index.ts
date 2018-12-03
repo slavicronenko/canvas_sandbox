@@ -2,6 +2,8 @@ import './style.scss';
 import { CanvasContext } from './CanvasContext';
 import { Dot } from './Dot';
 
+// TODO: Add Coordinates class
+
 const context = new CanvasContext();
 const dot1 = new Dot({ position: { x: 0, y: 0 }, speed: 500 });
 const dot2 = new Dot({ position: { x: 500, y: 0 }, speed: 400 });

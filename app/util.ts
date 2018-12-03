@@ -15,7 +15,7 @@ export function getDistanceBetween(a: ICoordinates, b: ICoordinates) {
   return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
 }
 
-export function getNextPosition(
+export function calculateNextPosition(
   current: ICoordinates,
   target: ICoordinates,
   speed: number,
