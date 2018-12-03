@@ -2,11 +2,20 @@ import { ICoordinates, IDrawable, ISize } from './interfaces';
 import { getNextPosition } from './util';
 
 export class Dot implements IDrawable {
-  constructor(private currentPosition: ICoordinates = Dot.DEFAULT_POSITION) {}
+  constructor(private settings: IDotSettings = Dot.DEFAULT_SETTINGS) {
+    const {
+      position,
+      speed
+    } = Object.assign({}, Dot.DEFAULT_SETTINGS, settings);
+
+    this.currentPosition = position;
+    this.speed = speed;
+  }
 
   private lastPositionUpdate: number = Date.now();
+  private currentPosition: ICoordinates;
   private targetPosition: ICoordinates;
-  private speed: number = 500; // pixels per second // TODO: make configurable
+  private readonly speed: number; // pixels per second
   private size: ISize = {
     width: 1,
     height: 1
@@ -31,7 +40,15 @@ export class Dot implements IDrawable {
     this.lastPositionUpdate = Date.now();
   }
 
-  public static get DEFAULT_POSITION() {
-    return { x: 0, y: 0 };
+  public static get DEFAULT_SETTINGS(): IDotSettings {
+    return {
+      position: { x: 0, y: 0 },
+      speed: 500
+    };
   }
+}
+
+interface IDotSettings {
+  position?: ICoordinates;
+  speed?: number;
 }
