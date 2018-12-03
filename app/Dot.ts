@@ -1,5 +1,5 @@
 import { ICoordinates, IDrawable, ISize } from './interfaces';
-import { getDistanceBetween } from './util';
+import { getNextPosition } from './util';
 
 export class Dot implements IDrawable {
   constructor(private currentPosition: ICoordinates = Dot.DEFAULT_POSITION) {}
@@ -16,35 +16,17 @@ export class Dot implements IDrawable {
     this.targetPosition = { x, y };
   }
 
-  public draw(context: CanvasRenderingContext2D): void { // TODO: move formulas to utility methods
-    const { width, height } = this.size;
-    let nextPosition;
+  public draw(context: CanvasRenderingContext2D): void {
+    const nextPosition = (this.targetPosition && this.currentPosition !== this.targetPosition)
+      ? getNextPosition(this.currentPosition, this.targetPosition, this.speed, this.lastPositionUpdate)
+      : this.currentPosition;
 
-    if (!this.targetPosition) {
-      nextPosition = this.currentPosition;
-    } else if (this.currentPosition === this.targetPosition) {
-      nextPosition = this.currentPosition;
+    if (nextPosition === this.targetPosition)  {
       this.targetPosition = null;
-    } else {
-      const { x: Cx, y: Cy} = this.currentPosition;
-      const { x: Tx, y: Ty} = this.targetPosition;
-      const timePassed = (Date.now() - this.lastPositionUpdate) / 1000;
-      const distanceLeft = getDistanceBetween(this.currentPosition, this.targetPosition);
-      const timeToArrive = distanceLeft / this.speed;
-      const Dx = ((Tx - Cx) / timeToArrive) * timePassed;
-      const Dy = ((Ty - Cy) / timeToArrive) * timePassed;
-
-      const Nx = Dx < Math.abs(Tx - Cx) ? Cx + ((Tx - Cx) / timeToArrive) * timePassed : Tx;
-      const Ny = Dy < Math.abs(Ty - Cy) ? Cy + ((Ty - Cy) / timeToArrive) * timePassed : Ty;
-
-      nextPosition = {
-        x: Nx,
-        y: Ny
-      };
     }
 
     context.beginPath();
-    context.strokeRect(nextPosition.x, nextPosition.y, width, height);
+    context.strokeRect(nextPosition.x, nextPosition.y, this.size.width, this.size.height);
     this.currentPosition = nextPosition;
     this.lastPositionUpdate = Date.now();
   }
