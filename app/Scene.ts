@@ -1,14 +1,14 @@
 import { generateString } from './util';
 import { ICanvasMouseEvent, IDrawable } from './interfaces';
 
-export class CanvasContext { // TODO: pick proper name
-  constructor(settings: ICanvasContextSettings = CanvasContext.DEFAULT_SETTINGS) {
+export class Scene {
+  constructor(settings: ISceneSettings = Scene.DEFAULT_SETTINGS) {
     const {
       element,
       id,
       width,
       height
-    } = Object.assign({}, CanvasContext.DEFAULT_SETTINGS, settings);
+    } = Object.assign({}, Scene.DEFAULT_SETTINGS, settings);
 
     const existingElement = document.getElementById(id) as HTMLCanvasElement;
 
@@ -16,7 +16,7 @@ export class CanvasContext { // TODO: pick proper name
       throw new Error(`Element with id (${id}) exists and it's not a canvas element!`);
     }
 
-    this.canvasElement = element || existingElement || CanvasContext.createCanvasElement(id, width, height);
+    this.canvasElement = element || existingElement || Scene.createElement(id, width, height);
     this.context = this.canvasElement.getContext('2d');
 
     document.body.appendChild(this.canvasElement);
@@ -68,7 +68,7 @@ export class CanvasContext { // TODO: pick proper name
     this.context.clearRect(0, 0, this.canvasElement.width, this.canvasElement.height);
   }
 
-  private static createCanvasElement(id: string, width: number, height: number): HTMLCanvasElement {
+  private static createElement(id: string, width: number, height: number): HTMLCanvasElement {
     const newElement = document.createElement('canvas');
 
     newElement.setAttribute('id', id);
@@ -78,7 +78,7 @@ export class CanvasContext { // TODO: pick proper name
     return newElement;
   }
 
-  private static get DEFAULT_SETTINGS(): ICanvasContextSettings {
+  private static get DEFAULT_SETTINGS(): ISceneSettings {
     return {
       id: generateString(),
       width: 500,
@@ -87,7 +87,7 @@ export class CanvasContext { // TODO: pick proper name
   }
 }
 
-export interface ICanvasContextSettings {
+export interface ISceneSettings {
   element?: HTMLCanvasElement;
   id?: string;
   width?: number;

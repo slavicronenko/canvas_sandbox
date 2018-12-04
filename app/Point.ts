@@ -15,6 +15,10 @@ export class Point implements ICoordinates {
     return Point.isEqual(this, b);
   }
 
+  public getNextPosition(target: Point, speed: number, timeFrame: number) {
+    return Point.calculateNextPoint(this, target, speed, timeFrame);
+  }
+
   public static isEqual(a: Point, b: Point): boolean {
     return a && b && a.x === b.x && a.y === b.y;
   }
@@ -23,18 +27,17 @@ export class Point implements ICoordinates {
     return Math.sqrt(Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2));
   }
 
-  public static calculateNextPosition( // TODO: pick proper name
+  public static calculateNextPoint(
     current: Point,
     target: Point,
     speed: number,
-    lastPositionUpdate: number
+    timeFrame: number
   ): Point {
-    const timePassed = (Date.now() - lastPositionUpdate) / 1000;
     const timeToArrive = current.distanceTo(target) / speed;
     const difference = { x: target.x - current.x, y: target.y - current.y };
     const distance = {
-      x: (difference.x / timeToArrive) * timePassed,
-      y: (difference.y / timeToArrive) * timePassed
+      x: (difference.x / timeToArrive) * timeFrame,
+      y: (difference.y / timeToArrive) * timeFrame
     };
 
     return new Point(
