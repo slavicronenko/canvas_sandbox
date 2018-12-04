@@ -1,6 +1,7 @@
-import { IDrawable, ISize } from './interfaces';
+import { ICoordinates, IDrawable, ISize } from './interfaces';
 import { Point } from './Point';
 
+// TODO: make different shapes
 export class Chaser implements IDrawable {
   constructor(private settings: IDotSettings = Chaser.DEFAULT_SETTINGS) {
     const {
@@ -10,10 +11,13 @@ export class Chaser implements IDrawable {
       size
     } = Object.assign({}, Chaser.DEFAULT_SETTINGS, settings);
 
-    this.currentPosition = position;
     this.maxSpeed = speed;
     this.acceleration = acceleration;
     this.size = size;
+    this.currentPosition = new Point(
+      position.x - (this.size.width / 2),
+      position.y - (this.size.width / 2)
+    );
   }
 
   private lastUpdate: number = Date.now();
@@ -24,8 +28,11 @@ export class Chaser implements IDrawable {
   private readonly acceleration: number;      // pixels pre second^2
   private size: ISize;
 
-  public setTargetPosition(point: Point): void {
-    this.targetPosition = point.copy();
+  public setTargetPosition({ x, y }: ICoordinates): void {
+    this.targetPosition = new Point(
+      x - (this.size.width / 2),
+      y - (this.size.height / 2)
+    );
   }
 
   public draw(context: CanvasRenderingContext2D): void {
@@ -62,7 +69,7 @@ export class Chaser implements IDrawable {
 }
 
 interface IDotSettings {
-  position?: Point;
+  position?: ICoordinates;
   speed?: number;
   acceleration?: number;
   size?: {

@@ -7,10 +7,6 @@ export class Point implements ICoordinates {
     return Point.calculateDistance(this, b);
   }
 
-  public copy(): Point {
-    return new Point(this.x, this.y);
-  }
-
   public equalsTo(b: Point): boolean {
     return Point.isEqual(this, b);
   }
