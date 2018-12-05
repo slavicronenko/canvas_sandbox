@@ -1,7 +1,7 @@
-import { ICoordinates } from './interfaces';
+import { IPosition } from './interfaces';
 
-export class Point implements ICoordinates {
-  constructor(public x: number, public y: number) {}
+export class Point implements IPosition {
+  constructor(public readonly x: number, public readonly y: number) {}
 
   public distanceTo(b: Point): number {
     return Point.calculateDistance(this, b);
@@ -11,7 +11,7 @@ export class Point implements ICoordinates {
     return Point.isEqual(this, b);
   }
 
-  public getNextPosition(target: Point, speed: number, timeFrame: number) {
+  public getNextPosition(target: Point, speed: number, timeFrame: number) { // TODO: pick better name
     return Point.calculateNextPoint(this, target, speed, timeFrame);
   }
 

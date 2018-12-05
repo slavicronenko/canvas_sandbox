@@ -1,5 +1,6 @@
 import { generateString } from './util';
-import { ICanvasMouseEvent, IDrawable } from './interfaces';
+import { IDrawable, ITrackable } from './interfaces';
+import { Point } from './Point';
 
 export class Scene {
   constructor(settings: ISceneSettings = Scene.DEFAULT_SETTINGS) {
@@ -25,33 +26,30 @@ export class Scene {
 
   private readonly canvasElement: HTMLCanvasElement;
   private readonly context: CanvasRenderingContext2D;
+  private readonly trackedEvents: {[id: string]: Point} = {};  // TODO: pick better name
   private readonly entities: IDrawable[] = [];
   private currentFrameId: number;
+  private lastRedrawTime: number = Date.now();
 
-  public add(entity: IDrawable): void {
-    this.entities.push(entity);
+  public add(...entities: IDrawable[]): void {
+    this.entities.push(...entities);
   }
 
-  public addEventListener(type: string, callback: (event: ICanvasMouseEvent) => void): void {
-    this.canvasElement.addEventListener(type, this.createEventHandler(type, callback));
+  public trackEvent(type: string): ITrackable {  // TODO: pick better name
+    this.canvasElement.addEventListener(type, (event: MouseEvent) => {
+      this.trackedEvents[type] = new Point(
+        event.clientX - this.canvasElement.offsetLeft,
+        event.clientY - this.canvasElement.offsetTop
+      );
+    });
+
+    return {    // TODO: maybe it should be an instance of some event class or something (Point?)
+      getCurrentPosition: () => this.trackedEvents[type]
+    };
   }
 
-  private createEventHandler(type, callback): (event: Event) => void {  // TODO: find more elegant way
-    const mouseEvent = (event: MouseEvent): void => {
-      callback(Object.assign(event, {
-        targetCoordinates: {
-          x: event.clientX - this.canvasElement.offsetLeft,
-          y: event.clientY - this.canvasElement.offsetTop
-        }
-      }));
-    };
-
-    const handlers = {
-      click: mouseEvent,
-      mousemove: mouseEvent
-    };
-
-    return handlers[type] || callback;
+  public addEventListener(type: string, callback: (event: Event) => void): void {
+    this.canvasElement.addEventListener(type, callback);
   }
 
   private play(): void {
@@ -60,8 +58,10 @@ export class Scene {
   }
 
   private redraw(): void {
+    const timePassed = (Date.now() - this.lastRedrawTime) / 1000;
     this.clear();
-    this.entities.forEach((entity) => entity.draw(this.context));
+    this.entities.forEach((entity) => entity.draw(this.context, timePassed));
+    this.lastRedrawTime = Date.now();
   }
 
   private clear(): void {

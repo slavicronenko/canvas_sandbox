@@ -1,8 +1,8 @@
-import { ICoordinates, IDrawable, ISize } from './interfaces';
+import { IPosition, IDrawable, ISize, ITrackable } from './interfaces';
 import { Point } from './Point';
 
-// TODO: make different shapes
-export class Chaser implements IDrawable {
+// TODO: different shapes, intercept, collision, bouncing
+export class Chaser implements IDrawable, ITrackable {
   constructor(private settings: IDotSettings = Chaser.DEFAULT_SETTINGS) {
     const {
       position,
@@ -20,39 +20,57 @@ export class Chaser implements IDrawable {
     );
   }
 
-  private lastUpdate: number = Date.now();
   private currentPosition: Point;
-  private targetPosition: Point;
+  private target: Point | ITrackable;
   private readonly maxSpeed: number;          // pixels per second
   private currentSpeed: number = 0;           // pixels per second
-  private readonly acceleration: number;      // pixels pre second^2
+  private readonly acceleration: number;      // pixels pre second
   private size: ISize;
+  private mode: TargetingModesEnum = TargetingModesEnum.Idle;
 
-  public setTargetPosition({ x, y }: ICoordinates): void {
-    this.targetPosition = new Point(
-      x - (this.size.width / 2),
-      y - (this.size.height / 2)
-    );
+  public getCurrentPosition(): Point {
+    return new Point(this.currentPosition.x, this.currentPosition.y);
   }
 
-  public draw(context: CanvasRenderingContext2D): void {
-    const timePassed = (Date.now() - this.lastUpdate) / 1000;
+  public moveTo(target: Point | ITrackable): void {
+    this.setTarget(target, TargetingModesEnum.Move);
+  }
 
-    if (this.targetPosition) {
+  public follow(target: Point | ITrackable): void {
+    this.setTarget(target, TargetingModesEnum.Follow);
+  }
+
+  private stop() {
+    this.currentSpeed = 0;
+    if (this.mode === TargetingModesEnum.Move) {
+      this.setTarget(null);
+    }
+  }
+
+  public draw(context: CanvasRenderingContext2D, timePassed: number): void {
+    const targetPosition = this.target instanceof Point
+      ? this.target
+      : this.target && this.target.getCurrentPosition();
+
+    if (targetPosition) {
       this.currentSpeed = this.currentSpeed < this.maxSpeed
         ? this.currentSpeed + this.acceleration * timePassed
         : this.maxSpeed;
-      this.currentPosition = this.currentPosition.getNextPosition(this.targetPosition, this.currentSpeed, timePassed);
-    }
 
-    if (this.currentPosition.equalsTo(this.targetPosition))  {
-      this.targetPosition = null;
-      this.currentSpeed = 0;
+      this.currentPosition = this.currentPosition.getNextPosition(targetPosition, this.currentSpeed, timePassed);
+
+      if (this.currentPosition.equalsTo(targetPosition)) {
+        this.stop();
+      }
     }
 
     context.beginPath();
     context.strokeRect(this.currentPosition.x, this.currentPosition.y, this.size.width, this.size.height);
-    this.lastUpdate = Date.now();
+  }
+
+  private setTarget(target: Point | ITrackable, mode: TargetingModesEnum = TargetingModesEnum.Idle): void {
+    this.target = target;
+    this.mode = mode;
   }
 
   public static get DEFAULT_SETTINGS(): IDotSettings {
@@ -69,11 +87,17 @@ export class Chaser implements IDrawable {
 }
 
 interface IDotSettings {
-  position?: ICoordinates;
+  position?: IPosition;
   speed?: number;
   acceleration?: number;
   size?: {
     width: number;
     height: number;
   };
+}
+
+enum TargetingModesEnum {
+  Idle,
+  Move,
+  Follow
 }

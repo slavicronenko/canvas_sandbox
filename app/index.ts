@@ -4,16 +4,13 @@ import { Chaser } from './Chaser';
 import { Point } from './Point';
 
 const scene = new Scene();
-const dot1 = new Chaser({ position: new Point(0, 0), speed: 500 });
-const dot2 = new Chaser({ position: new Point(500, 0), speed: 400 });
-const dot3 = new Chaser({ position: new Point(0, 500), speed: 300 });
-const dot4 = new Chaser({ position: new Point(500, 500), speed: 200 });
+const dot1 = new Chaser({ position: new Point(10, 10), speed: 500 });
+const dot2 = new Chaser({ position: new Point(490, 10), speed: 500 });
+const dot3 = new Chaser({ position: new Point(490, 490), speed: 500 });
+const dot4 = new Chaser({ position: new Point(10, 490), speed: 500 });
 
-scene.add(dot1);
-scene.add(dot2);
-scene.add(dot3);
-scene.add(dot4);
-scene.addEventListener('mousemove', ({ targetCoordinates: { x, y } }) => dot1.setTargetPosition(new Point(x, y)));
-scene.addEventListener('mousemove', ({ targetCoordinates: { x, y } }) => dot2.setTargetPosition(new Point(x, y)));
-scene.addEventListener('mousemove', ({ targetCoordinates: { x, y } }) => dot3.setTargetPosition(new Point(x, y)));
-scene.addEventListener('mousemove', ({ targetCoordinates: { x, y } }) => dot4.setTargetPosition(new Point(x, y)));
+scene.add(dot1, dot2, dot3, dot4);
+dot1.moveTo(scene.trackEvent('mousemove'));
+dot2.follow(dot1);
+dot3.follow(dot2);
+dot4.follow(dot3);

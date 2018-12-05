@@ -1,4 +1,6 @@
-export interface ICoordinates {
+import { Point } from './Point';
+
+export interface IPosition {
   x: number;
   y: number;
 }
@@ -9,9 +11,9 @@ export interface ISize {
 }
 
 export interface IDrawable extends Object {
-  draw(context: CanvasRenderingContext2D): void;
+  draw(context: CanvasRenderingContext2D, timePassed: number): void;
 }
 
-export interface ICanvasMouseEvent extends MouseEvent {
-  targetCoordinates: ICoordinates;
+export interface ITrackable {
+  getCurrentPosition: () => Point | null;
 }
