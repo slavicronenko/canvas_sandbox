@@ -3,6 +3,10 @@ import { IPosition } from './interfaces';
 export class Point implements IPosition {
   constructor(public readonly x: number, public readonly y: number) {}
 
+  public copy(): Point {
+    return new Point(this.x, this.y);
+  }
+
   public distanceTo(b: Point): number {
     return Point.calculateDistance(this, b);
   }
