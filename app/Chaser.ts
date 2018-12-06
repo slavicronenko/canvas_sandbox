@@ -1,5 +1,6 @@
 import { IPosition, IDrawable, ISize, ITrackable } from './interfaces';
 import { Point } from './Point';
+import { Target } from './Target';
 
 // TODO: different shapes, intercept, collision, bouncing
 export class Chaser implements IDrawable, ITrackable {
@@ -14,14 +15,14 @@ export class Chaser implements IDrawable, ITrackable {
     this.maxSpeed = speed;
     this.acceleration = acceleration;
     this.size = size;
-    this.currentPosition = new Point(
+    this.position = new Point(
       position.x - (this.size.width / 2),
       position.y - (this.size.width / 2)
     );
   }
 
-  private currentPosition: Point;
-  private target: Point | ITrackable;
+  private position: Point;
+  private target: Target;
   private readonly maxSpeed: number;          // pixels per second
   private currentSpeed: number = 0;           // pixels per second
   private readonly acceleration: number;      // pixels pre second
@@ -29,48 +30,53 @@ export class Chaser implements IDrawable, ITrackable {
   private mode: TargetingModesEnum = TargetingModesEnum.Idle;
 
   public getCurrentPosition(): Point {
-    return new Point(this.currentPosition.x, this.currentPosition.y);
+    return this.position.copy();
   }
 
-  public moveTo(target: Point | ITrackable): void {
+  public moveTo(target: ITrackable): void {
     this.setTarget(target, TargetingModesEnum.Move);
   }
 
-  public follow(target: Point | ITrackable): void {
+  public follow(target: ITrackable): void {
     this.setTarget(target, TargetingModesEnum.Follow);
   }
 
   private stop() {
     this.currentSpeed = 0;
     if (this.mode === TargetingModesEnum.Move) {
-      this.setTarget(null);
+      this.clearTarget();
     }
   }
 
   public draw(context: CanvasRenderingContext2D, timePassed: number): void {
-    const targetPosition = this.target instanceof Point
-      ? this.target
-      : this.target && this.target.getCurrentPosition();
+    if (this.target) {
+      this.target.update();
 
-    if (targetPosition) {
-      this.currentSpeed = this.currentSpeed < this.maxSpeed
-        ? this.currentSpeed + this.acceleration * timePassed
-        : this.maxSpeed;
+      if (this.target.position) {
+        this.currentSpeed = this.currentSpeed < this.maxSpeed
+          ? this.currentSpeed + this.acceleration * timePassed
+          : this.maxSpeed;
 
-      this.currentPosition = this.currentPosition.getNextPosition(targetPosition, this.currentSpeed, timePassed);
+        this.position = this.position.getNextPosition(this.target.position, this.currentSpeed, timePassed);
 
-      if (this.currentPosition.equalsTo(targetPosition)) {
-        this.stop();
+        if (this.position.equalsTo(this.target.position)) {
+          this.stop();
+        }
       }
     }
 
     context.beginPath();
-    context.strokeRect(this.currentPosition.x, this.currentPosition.y, this.size.width, this.size.height);
+    context.strokeRect(this.position.x, this.position.y, this.size.width, this.size.height);
   }
 
-  private setTarget(target: Point | ITrackable, mode: TargetingModesEnum = TargetingModesEnum.Idle): void {
-    this.target = target;
+  private setTarget(target: ITrackable, mode: TargetingModesEnum = TargetingModesEnum.Idle): void {
+    this.target = new Target(target);
     this.mode = mode;
+  }
+
+  private clearTarget(): void {
+    this.target = null;
+    this.mode = TargetingModesEnum.Idle;
   }
 
   public static get DEFAULT_SETTINGS(): IDotSettings {
