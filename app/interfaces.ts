@@ -1,4 +1,4 @@
-import { Point } from './Point';
+import { Point } from './point.class';
 
 export interface IPosition {
   x: number;

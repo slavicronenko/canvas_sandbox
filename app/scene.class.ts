@@ -1,6 +1,6 @@
 import { generateString } from './util';
 import { IDrawable, ITrackable } from './interfaces';
-import { Point } from './Point';
+import { Point } from './point.class';
 
 export class Scene {
   constructor(settings: ISceneSettings = Scene.DEFAULT_SETTINGS) {

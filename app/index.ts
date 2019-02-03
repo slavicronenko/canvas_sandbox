@@ -1,7 +1,7 @@
 import './style.scss';
-import { Scene } from './Scene';
-import { Chaser } from './Chaser';
-import { Point } from './Point';
+import { Scene } from './scene.class';
+import { Chaser } from './chaser.class';
+import { Point } from './point.class';
 
 const scene = new Scene();
 const dot1 = new Chaser({ position: new Point(10, 10), speed: 500 });

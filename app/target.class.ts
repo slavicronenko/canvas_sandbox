@@ -1,7 +1,7 @@
-import { Point } from './Point';
+import { Point } from './point.class';
 import { ITrackable } from './interfaces';
 
-export class Target {
+export class TargetClass {
   constructor(tracked: ITrackable) {
     this.tracked = tracked;
     this.update();
@@ -37,7 +37,7 @@ export class Target {
 
       this.trace.push({ time, position, speed, acceleration });
 
-      if (this.trace.length > Target.MAX_TRACE_LENGTH) {
+      if (this.trace.length > TargetClass.MAX_TRACE_LENGTH) {
         this.trace.shift();
       }
     }

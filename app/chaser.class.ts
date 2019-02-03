@@ -1,6 +1,6 @@
 import { IPosition, IDrawable, ISize, ITrackable } from './interfaces';
-import { Point } from './Point';
-import { Target } from './Target';
+import { Point } from './point.class';
+import { TargetClass } from './target.class';
 
 // TODO: different shapes, intercept, collision, bouncing
 export class Chaser implements IDrawable, ITrackable {
@@ -22,7 +22,7 @@ export class Chaser implements IDrawable, ITrackable {
   }
 
   private position: Point;
-  private target: Target;
+  private target: TargetClass;
   private readonly maxSpeed: number;          // pixels per second
   private currentSpeed: number = 0;           // pixels per second
   private readonly acceleration: number;      // pixels pre second
@@ -70,7 +70,7 @@ export class Chaser implements IDrawable, ITrackable {
   }
 
   private setTarget(target: ITrackable, mode: TargetingModesEnum = TargetingModesEnum.Idle): void {
-    this.target = new Target(target);
+    this.target = new TargetClass(target);
     this.mode = mode;
   }
 
